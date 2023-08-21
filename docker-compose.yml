@@ -1,0 +1,60 @@
+
+version: '3.2'
+services:
+  db3:
+    container_name: imarkplace_db3
+    image: mariadb:10.3
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db3_data:/var/lib/mysql 
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootimark123
+      - MYSQL_DATABASE=imarkdb
+      - MYSQL_USER=imark
+      - MYSQL_PASSWORD=imark123
+    ports:
+      - 3306:3306
+    networks:
+      hfnet:
+        ipv4_address: 192.168.55.10
+  elasticsearch:
+    image: markoshust/magento-elasticsearch:7.16-0
+    container_name: imarkplace_elastic
+    ports:
+      - "9200:9200"
+    environment:
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      ## Avoid test failures due to small disks
+      ## More info at https://github.com/markshust/docker-magento/issues/488
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+      - "index.blocks.read_only_allow_delete" 
+    restart: always
+    networks:
+      hfnet:
+        ipv4_address: 192.168.55.11
+  php-apache-environment:
+    container_name: imarkplace_apache
+    build: . 
+    volumes:
+      - .:/var/www/html
+      - /usr/local/bin/composer:/usr/local/bin/composer
+    ports:
+      - 80:80  
+    restart: always
+    networks:
+      hfnet:
+        ipv4_address: 192.168.55.12
+networks:
+  hfnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.55.0/24
+volumes:
+  db3_data:
+
+
+

@@ -1,0 +1,30 @@
+Imark docker compose steps:
+
+Domain: http://imark.local
+Frontend: admin_1otxsn 
+
+Required: 
+Composer version: 2 
+PHP version: 7.4
+
+Environment:
+MYSQL_ROOT_PASSWORD=rootimark123
+MYSQL_DATABASE=imarkdb
+MYSQL_USER=imark
+MYSQL_PASSWORD=imark123
+
+Steps:
+
+Clone the project 
+
+Command to run the script:
+sudo ./script.sh
+
+Import database for first time:
+mysql -u root -p -h 127.0.0.1 -f imarkdb < database_name
+
+Command to stop the project:
+docker compose down
+
+Note:
+In first time setup,you have run the script then import the database and then again run script for setup install.
